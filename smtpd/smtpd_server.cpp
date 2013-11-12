@@ -29,11 +29,7 @@ void server::start_accept()
 
 void server::handle_accept(const boost::system::error_code& e)
 {
-	boost::system::error_code t;
-	std::cout
-		<< "new connection: "
-		<< new_session_->socket().remote_endpoint(t)
-		<< std::endl;
+	new_session_->start();
 	start_accept();
 }
 

@@ -20,6 +20,9 @@ public:
 	/// Get the socket associated with the connection.
 	boost::asio::ip::tcp::socket& socket();
 
+	/// Begin I/O operations
+	void start();
+
 private:
 	/// Basic I/O object
 	boost::asio::io_service& io_;
@@ -35,6 +38,10 @@ private:
 
 	/// Socket for the connection.
 	boost::asio::ip::tcp::socket socket_;
+
+	void handle_read(const boost::system::error_code& e, std::size_t bytes_transferred);
+
+	void start_read();
 };
 
 typedef boost::shared_ptr<session> session_ptr;
