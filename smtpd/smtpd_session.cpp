@@ -27,7 +27,12 @@ void session::start()
 		<< socket_.remote_endpoint(t)
 		<< std::endl;
 
-	start_read();
+	reply_ = reply::stock_reply(reply::banner);
+
+	boost::asio::async_write(socket_, reply_.to_buffers(),
+		boost::bind(&session::handle_write,
+			shared_from_this(),
+			boost::asio::placeholders::error));
 }
 
 void session::start_read()

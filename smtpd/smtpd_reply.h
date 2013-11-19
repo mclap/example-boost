@@ -11,6 +11,7 @@ struct reply
 {
 	enum status_type
 	{
+		banner = 220,
 		ok = 250,
 		general_error = 550
 	} status;

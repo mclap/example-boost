@@ -13,6 +13,7 @@ const char crlf[] = { '\r', '\n' };
 const char reply_sep_inter[] = { '-' };
 const char reply_sep_final[] = { ' ' };
 
+const std::string banner = "Example Mail System Ready";
 const std::string ok = "OK";
 const std::string general_error = "General error";
 const std::string unidentified_failure = "Unidentified failure";
@@ -21,6 +22,7 @@ boost::asio::const_buffer to_buffer(const reply::status_type type)
 {
 	switch(type)
 	{
+	case reply::banner: return boost::asio::buffer(banner);
 	case reply::ok: return boost::asio::buffer(ok);
 	case reply::general_error: return boost::asio::buffer(general_error);
 	}
