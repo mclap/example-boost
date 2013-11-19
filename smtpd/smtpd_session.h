@@ -53,6 +53,8 @@ private:
 	void handle_write(const boost::system::error_code& e);
 
 	void start_read();
+
+	void async_write_buffers(const std::vector<boost::asio::const_buffer>& buffers);
 };
 
 typedef boost::shared_ptr<session> session_ptr;

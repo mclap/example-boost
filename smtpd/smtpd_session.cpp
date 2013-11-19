@@ -29,10 +29,7 @@ void session::start()
 
 	reply_ = reply::stock_reply(reply::banner);
 
-	boost::asio::async_write(socket_, reply_.to_buffers(),
-		boost::bind(&session::handle_write,
-			shared_from_this(),
-			boost::asio::placeholders::error));
+	async_write_buffers(reply_.to_buffers());
 }
 
 void session::start_read()
@@ -75,10 +72,7 @@ void session::handle_read(const boost::system::error_code& e, std::size_t bytes_
 
 			reply_ = reply::stock_reply(reply::ok);
 
-			boost::asio::async_write(socket_, reply_.to_buffers(),
-				boost::bind(&session::handle_write,
-					shared_from_this(),
-					boost::asio::placeholders::error));
+			async_write_buffers(reply_.to_buffers());
 			request_.clear();
 		}
 		else if (!result)
@@ -116,6 +110,14 @@ void session::stop()
 {
 	std::cout << "STOP" << std::endl;
 	socket_.close();
+}
+
+void session::async_write_buffers(const std::vector<boost::asio::const_buffer>& buffers)
+{ 
+	boost::asio::async_write(socket_, buffers,
+		boost::bind(&session::handle_write,
+			shared_from_this(),
+			boost::asio::placeholders::error));
 }
 
 } // namespace smtp
