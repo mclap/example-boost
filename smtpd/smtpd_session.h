@@ -8,6 +8,8 @@
 
 #include "smtpd_request_parser.h"
 #include "smtpd_request_handler.h"
+#include "smtpd_request.h"
+#include "smtpd_reply.h"
 
 namespace smtp
 {
@@ -23,6 +25,9 @@ public:
 	/// Begin I/O operations
 	void start();
 
+	/// Stop I/O operations
+	void stop();
+
 private:
 	/// Basic I/O object
 	boost::asio::io_service& io_;
@@ -36,10 +41,16 @@ private:
 	/// Buffer for incoming data.
 	boost::array<char, 8192> buffer_;
 
+	/// SMTP request itself
+	request request_;
+
+	reply reply_;
+
 	/// Socket for the connection.
 	boost::asio::ip::tcp::socket socket_;
 
 	void handle_read(const boost::system::error_code& e, std::size_t bytes_transferred);
+	void handle_write(const boost::system::error_code& e);
 
 	void start_read();
 };

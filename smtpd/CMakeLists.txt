@@ -10,10 +10,12 @@ set(USED_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBR
 
 add_executable(example-smtpd
 	smtpd_request_handler.h
-	smtpd_request_parser.h
+	smtpd_request_parser.cpp smtpd_request_parser.h
+	smtpd_request.h
 	smtpd_server.cpp smtpd_server.h
 	smtpd_session.cpp smtpd_session.h
 	smtpd_main.cpp
+	smtpd_reply.cpp smtpd_reply.h
 	)
 
 target_link_libraries(example-smtpd ${USED_LIBS})

@@ -42,12 +42,75 @@ void session::handle_read(const boost::system::error_code& e, std::size_t bytes_
 {
 	boost::system::error_code t;
 	std::cout
-		<< '[' << socket_.remote_endpoint(t) << ']'
+		<< "READ [" << socket_.remote_endpoint(t) << ']'
 		<< " received bytes: " << bytes_transferred
 		<< ", error_code: " << e
 		<< std::endl;
 
-	start_read();
+	if (!e)
+	{
+
+		boost::tribool result;
+		boost::tie(result, boost::tuples::ignore) =
+			parser_.parse(
+			request_, buffer_.data(),
+			buffer_.data() + bytes_transferred);
+
+		if (result)
+		{
+			std::cout
+				<< "command:["
+				<<request_.command
+				<< "], argument:["
+				<< request_.argument
+				<< "]" << std::endl;
+			/*
+			request_handler_.handle_request(request_, reply_);
+			*/
+
+			reply_ = reply::stock_reply(reply::ok);
+
+			boost::asio::async_write(socket_, reply_.to_buffers(),
+				boost::bind(&session::handle_write,
+					shared_from_this(),
+					boost::asio::placeholders::error));
+			request_.clear();
+		}
+		else if (!result)
+		{
+			std::cout
+				<< "ERROR in input"
+				<< std::endl;
+		}
+		else
+		{
+			start_read();
+		}
+	}
+	else
+	{
+		stop();
+	}
+}
+
+void session::handle_write(const boost::system::error_code& e)
+{
+	boost::system::error_code t;
+	std::cout
+		<< "WRITE [" << socket_.remote_endpoint(t) << ']'
+		<< ", error_code: " << e
+		<< std::endl;
+
+	if (!e)
+	{
+		start_read();
+	}
+}
+
+void session::stop()
+{
+	std::cout << "STOP" << std::endl;
+	socket_.close();
 }
 
 } // namespace smtp
